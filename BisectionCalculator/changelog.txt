@@ -1,0 +1,10 @@
+Changelog
+----------
+v1.02
+- Fixed a small issue with text taking multiple lines when using extra large fonts
+
+v1.01
+- Fixed a bug when a user empties an input field
+
+v1.0
+- Initial release
