@@ -1,13 +1,15 @@
 package com.zackehh.bisect;
 
+import android.app.Activity;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import static android.text.Html.*;
 
 /**
  * About page for the calculator just detailing information
@@ -30,13 +32,30 @@ public class About extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		// Create a new ViewGroup for the fragment
 		ViewGroup vAbout = (ViewGroup)inflater.inflate(R.layout.activity_about, null);		
-		// Set the listeners and the hyperlinking
-		((TextView)vAbout.findViewById(R.id.link)).setMovementMethod(LinkMovementMethod.getInstance());
-		((TextView)vAbout.findViewById(R.id.link)).setText(Html.fromHtml(getResources().getString(R.string.link)));
-		((TextView)vAbout.findViewById(R.id.report)).setMovementMethod(LinkMovementMethod.getInstance());
-		((TextView)vAbout.findViewById(R.id.report)).setText(Html.fromHtml(getResources().getString(R.string.bug)));
-		((TextView)vAbout.findViewById(R.id.about)).setMovementMethod(LinkMovementMethod.getInstance());
-		((TextView)vAbout.findViewById(R.id.about)).setText(Html.fromHtml(getResources().getString(R.string.about)));
+		// Create array of all elements with links
+		int views[] = {
+				R.id.link,
+				R.id.report,
+				R.id.about,
+				R.string.link,
+				R.string.bug,
+				R.string.about
+		};
+		// Set all the links to direct to their URL
+		for(int i = 0; i < 3; i++){
+			TextView view = (TextView)vAbout.findViewById(views[i]);
+			view.setMovementMethod(LinkMovementMethod.getInstance());
+			view.setText(fromHtml(getResources().getString(views[i + 3])));
+		}
+		// Put the version number beside the author string
+		try {
+			TextView vAuthor = (TextView)vAbout.findViewById(R.id.author);
+			Activity a = getActivity();
+			vAuthor.setText("v" + 
+							a.getPackageManager().getPackageInfo(a.getPackageName(), 0).versionName +
+							" " +
+							fromHtml(getResources().getString(R.string.author)));
+		} catch (NameNotFoundException e) { } 
 		// Return the fragment
 		return vAbout;
 	}
