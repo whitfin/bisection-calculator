@@ -21,10 +21,6 @@ public class ExpressionBuilder {
 	private String expression;
 
 	public ExpressionBuilder(String expression) {
-		if (expression.trim().isEmpty()) {
-			// throw new IllegalArgumentException("Expression can not be empty!.");
-			// Do nothing because Android, above is for Java only
-		}
 		this.expression = expression;
 		highUnaryPrecedence = System.getProperty(PROPERTY_UNARY_HIGH_PRECEDENCE) == null
 				|| !System.getProperty(PROPERTY_UNARY_HIGH_PRECEDENCE).equals("false");
