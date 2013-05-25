@@ -3,19 +3,16 @@ package com.zackehh.bisect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.Display;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 //import android.widget.Toast;
 import static java.lang.Math.*;
@@ -24,23 +21,16 @@ import com.zackehh.parse.*;
 
 /**
  * Calculate various results from Bisection. Simple utility for
- * checking results of own calculations, or just quick maths.
+ * checking results of own calculations, or just quick maths. 
  * 
  * @author Isaac Whitfield
- * @version 13/04/2013
+ * @version 25/05/2013
  */
-
-public class MainActivity extends Activity {
-
+public class Calculation extends Fragment {
 	// Define variables for bisection
 	double a, b, p, TOL;
 	// Set the number of iterations to calculate to, if TOL = 0
 	int M;
-	// Set the gesture stuff
-	private GestureDetector gestureDetector;
-	private View.OnTouchListener gestureListener;
-	// New intent for swiping
-	private Intent swipe;
 	// Control for the thread and result
 	private Handler threadHandler = new Handler();
 	private String setResult;
@@ -48,50 +38,43 @@ public class MainActivity extends Activity {
 	private boolean rootToCalc = true;
 	// Set other variables
 	int width;
-
+	// Set the ViewGroup for the fragment
+	private ViewGroup vCalc;
+	
+	// Create a new instance of the fragment
+	public static Fragment newInstance() {
+		// Create a new calculator
+		Calculation calc = new Calculation();
+		// Return the calculator
+		return calc;
+	}
+	
 	// Suppressions due to old/new API support
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
-		gestureDetector = new GestureDetector(getBaseContext(), new SwipeGestureDetector());
-		gestureListener = new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				return gestureDetector.onTouchEvent(event);
-			}
-		};
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
-		final EditText maxIterations = (EditText)findViewById(R.id.iterations);
+		// Initialize the ViewGroup for the fragment
+		vCalc = (ViewGroup)inflater.inflate(R.layout.activity_main, null);
 		
-		// Set the listeners for the touches on the screen 
-		maxIterations.setOnTouchListener(gestureListener);
-		((ScrollView)findViewById(R.id.scrollable)).setOnTouchListener(gestureListener);
-		((EditText)findViewById(R.id.pointA)).setOnTouchListener(gestureListener);
-		((EditText)findViewById(R.id.pointB)).setOnTouchListener(gestureListener);
-		((EditText)findViewById(R.id.inputTolerance)).setOnTouchListener(gestureListener);
-		((TextView)findViewById(R.id.Root)).setOnTouchListener(gestureListener);
-
-		Button calculate = (Button)findViewById(R.id.calculate);
-		calculate.setOnTouchListener(gestureListener);
+		// Tell the calculate button what to calculate
+		Button calculate = (Button)vCalc.findViewById(R.id.calculate);
 		calculate.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				// Check there was an entered function to avoid a crash
-				EditText myFunction = (EditText)findViewById(R.id.function);
-				TextView result = (TextView)findViewById(R.id.Root);
+				EditText myFunction = (EditText)vCalc.findViewById(R.id.function);
+				TextView result = (TextView)vCalc.findViewById(R.id.Root);
 				if(myFunction.getText().toString().matches("")){
 					// If there isn't one, report it
 					result.setText("Please enter a valid function!");
 				} else {
 					try {
 						// Set the variables needed from the user input
-						a = Double.parseDouble(((EditText)findViewById(R.id.pointA)).getText().toString());
-						b = Double.parseDouble(((EditText)findViewById(R.id.pointB)).getText().toString());
-						TOL = Double.parseDouble(((EditText)findViewById(R.id.inputTolerance)).getText().toString());
+						a = Double.parseDouble(((EditText)vCalc.findViewById(R.id.pointA)).getText().toString());
+						b = Double.parseDouble(((EditText)vCalc.findViewById(R.id.pointB)).getText().toString());
+						TOL = Double.parseDouble(((EditText)vCalc.findViewById(R.id.inputTolerance)).getText().toString());
 						// Round the max iterations to the nearest integer
-						M = (int) round(Double.parseDouble(((EditText)findViewById(R.id.iterations)).getText().toString()));
+						M = (int) round(Double.parseDouble(((EditText)vCalc.findViewById(R.id.iterations)).getText().toString()));
 					} catch (NumberFormatException e){
 						// Catch empty input fields, or invalid inputs
 						result.setText("Please provide the required information.");
@@ -124,7 +107,7 @@ public class MainActivity extends Activity {
 		});
 
 		// Get the display width
-		Display display = getWindowManager().getDefaultDisplay();
+		Display display = getActivity().getWindowManager().getDefaultDisplay();
 		// For new API
 		if (android.os.Build.VERSION.SDK_INT >= 13){
 			Point size = new Point();
@@ -136,10 +119,8 @@ public class MainActivity extends Activity {
 		}
 
 		// Set listeners for the two buttons
-		final Button calcButtonRoot = (Button)findViewById(R.id.calcButtonRoot);
-		final Button calcButtonMax = (Button)findViewById(R.id.calcButtonMax);
-		calcButtonRoot.setOnTouchListener(gestureListener);
-		calcButtonMax.setOnTouchListener(gestureListener);
+		final Button calcButtonRoot = (Button)vCalc.findViewById(R.id.calcButtonRoot);
+		final Button calcButtonMax = (Button)vCalc.findViewById(R.id.calcButtonMax);
 
 		// Set the button width and the onClick()
 		calcButtonRoot.setWidth(width);
@@ -185,16 +166,17 @@ public class MainActivity extends Activity {
 
 			// Set the width of all the views
 			for(int i = 0; i < views.length; i++){
-				TextView view = (TextView)findViewById(views[i]);
+				TextView view = (TextView)vCalc.findViewById(views[i]);
 				view.setWidth(width);
 			}
 		}
 		// End of setting up landscape view
+		return vCalc;
 	}
 
 	/**
-	 * Remaps the main page back button to exit the application, instead
-	 * of going to the About/Usage page. Makes it seem a bit neater.
+	 * Remaps the main vCalc back button to exit the application, instead
+	 * of going to the About/Usage vCalc. Makes it seem a bit neater.
 	 */
 	public void onBackPressed() {
 		Intent exit = new Intent(Intent.ACTION_MAIN);
@@ -244,68 +226,8 @@ public class MainActivity extends Activity {
 	 * method called from updateRunnable.
 	 */
 	private void updateUI(){
-		TextView result = (TextView)findViewById(R.id.Root);
+		TextView result = (TextView)vCalc.findViewById(R.id.Root);
 		result.setText(setResult);
-	}
-
-	/**
-	 * Beginning of the creation of the swipe gestures used to access other
-	 * menus. Done the old-school way for compatibility and I just generally
-	 * dislike the Action Bar at the top of this app.
-	 */
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (gestureDetector.onTouchEvent(event)) {
-			return true;
-		}
-		return super.onTouchEvent(event);
-	}
-
-	// Left swipe control to go to About page
-	private void onLeftSwipe() {
-		swipe = new Intent().setClass(this, About.class);
-		startActivity(swipe);
-	}
-
-	// Right swipe control to go to Usage page
-	private void onRightSwipe() {
-		swipe = new Intent().setClass(this, Usage.class);
-		startActivity(swipe);
-	}
-
-	// Private class for gestures
-	private class SwipeGestureDetector 
-	extends SimpleOnGestureListener {
-		// Swipe properties, you can change it to edit swipe requirements
-		private static final int SWIPE_MIN_DISTANCE = 120;
-		private static final int SWIPE_MAX_OFF_PATH = 200;
-		private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2,
-				float velocityX, float velocityY) {
-			try {
-				float diffAbs = Math.abs(e1.getY() - e2.getY());
-				float diff = e1.getX() - e2.getX();
-
-				if (diffAbs > SWIPE_MAX_OFF_PATH)
-					return false;
-
-				// Left swipe
-				if (diff > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					MainActivity.this.onLeftSwipe();
-
-				// Right swipe
-				} else if (-diff > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					MainActivity.this.onRightSwipe();
-				}
-			} catch (Exception e) {
-				Log.e("MainActivity", "Error on gestures");
-			}
-			return false;
-		}
 	}
 
 	/**
@@ -387,7 +309,7 @@ public class MainActivity extends Activity {
 		Calculable function;
 		try {
 			// Find the function from user input
-			EditText myFunction = (EditText)findViewById(R.id.function);
+			EditText myFunction = (EditText)vCalc.findViewById(R.id.function);
 			function = new ExpressionBuilder(myFunction.getText().toString()).withVariableNames("x").build();
 			function.setVariable("x",x);
 			x = function.calculate();
