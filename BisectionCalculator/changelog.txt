@@ -1,5 +1,11 @@
 Changelog
 ----------
+v1.1.1
+- Added support for API 8 whilst keeping the same features
+
+v1.1
+- Rewritten for smoother scrolling through the menus on custom ROMs
+
 v1.02
 - Fixed a small issue with text taking multiple lines when using extra large fonts
 
