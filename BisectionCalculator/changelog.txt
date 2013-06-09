@@ -1,5 +1,8 @@
 Changelog
 ----------
+v1.1.2
+- Optimized code and minor UI changes
+
 v1.1.1
 - Added support for API 8 whilst keeping the same features
 

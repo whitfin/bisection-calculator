@@ -55,7 +55,7 @@ public class Calculation extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		// Initialize the ViewGroup for the fragment
-		vCalc = (ViewGroup)inflater.inflate(R.layout.activity_main, null);
+		vCalc = (ViewGroup)inflater.inflate(R.layout.activity_bisection, null);
 		
 		// Tell the calculate button what to calculate
 		Button calculate = (Button)vCalc.findViewById(R.id.calculate);

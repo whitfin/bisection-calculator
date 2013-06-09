@@ -35,4 +35,18 @@ public class CalculatorControl extends FragmentActivity {
         // Always start on the middle page, or as close as possible
         mPager.setCurrentItem((int) ceil(NUM_PAGES/2));
     }
+    
+    @Override
+	public void onResume(){
+		super.onResume();
+		// Override transition for entering the activity
+		this.overridePendingTransition(0, 0);
+	}
+	
+	@Override
+	public void onPause(){
+		super.onPause();
+		// Override transition for exiting the activity
+		this.overridePendingTransition(0, 0);
+	}
 }
