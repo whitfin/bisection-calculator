@@ -1,5 +1,8 @@
 Changelog
 ----------
+v1.1.3
+- Update UI and shrunk code
+
 v1.1.2
 - Optimized code and minor UI changes
 

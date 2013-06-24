@@ -19,10 +19,9 @@ public class MainControl extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.main_page);
 		// Set the button to start the Bisection Calculator
-		Button calculate = (Button)findViewById(R.id.bisectionButton);
-		calculate.setOnClickListener(new View.OnClickListener(){
+		((Button)findViewById(R.id.bisectionButton)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				startActivity(new Intent(MainControl.this, CalculatorControl.class));
 			}
@@ -33,13 +32,13 @@ public class MainControl extends Activity {
 	public void onResume(){
 		super.onResume();
 		// Override transition for entering the activity
-		this.overridePendingTransition(0, 0);
+		overridePendingTransition(0, 0);
 	}
 
 	@Override
 	public void onPause(){
 		super.onPause();
 		// Override transition for exiting the activity
-		this.overridePendingTransition(0, 0);
+		overridePendingTransition(0, 0);
 	}
 }

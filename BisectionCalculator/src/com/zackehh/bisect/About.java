@@ -1,6 +1,5 @@
 package com.zackehh.bisect;
 
-import android.app.Activity;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,16 +21,14 @@ public class About extends Fragment {
 	
 	// Create a new instance of the fragment
 	public static Fragment newInstance() {
-		// Create a new usage page
-		About about = new About();	
 		// Return the new page
-		return about;
+		return new About();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		// Create a new ViewGroup for the fragment
-		ViewGroup vAbout = (ViewGroup)inflater.inflate(R.layout.activity_about, null);		
+		ViewGroup vAbout = (ViewGroup)inflater.inflate(R.layout.about, null);		
 		// Create array of all elements with links
 		int views[] = {
 				R.id.link,
@@ -50,10 +47,8 @@ public class About extends Fragment {
 		// Put the version number beside the author string
 		try {
 			TextView vAuthor = (TextView)vAbout.findViewById(R.id.author);
-			Activity a = getActivity();
-			vAuthor.setText("v" + 
-							a.getPackageManager().getPackageInfo(a.getPackageName(), 0).versionName +
-							" " +
+			vAuthor.setText("v" + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName
+							+ " " +
 							fromHtml(getResources().getString(R.string.author)));
 		} catch (NameNotFoundException e) { } 
 		// Return the fragment

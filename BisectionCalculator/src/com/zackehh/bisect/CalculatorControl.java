@@ -1,5 +1,7 @@
 package com.zackehh.bisect;
 
+import com.viewpagerindicator.LinePageIndicator;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
@@ -25,13 +27,15 @@ public class CalculatorControl extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_control);
+        setContentView(R.layout.fragment_control);
         // Create a new ViewPager
         mPager = (ViewPager)findViewById(R.id.pager);
         // Create a new control adapter and pass of the number of pages
         mPagerAdapter = new CalculatorControlAdapter(getSupportFragmentManager(), NUM_PAGES);
         // Set the adapter for the ViewPager
         mPager.setAdapter(mPagerAdapter);
+        // Set the ViewPager of the PageIndicator
+        ((LinePageIndicator)findViewById(R.id.indicator)).setViewPager(mPager);
         // Always start on the middle page, or as close as possible
         mPager.setCurrentItem((int) ceil(NUM_PAGES/2));
     }
@@ -40,13 +44,13 @@ public class CalculatorControl extends FragmentActivity {
 	public void onResume(){
 		super.onResume();
 		// Override transition for entering the activity
-		this.overridePendingTransition(0, 0);
+		overridePendingTransition(0, 0);
 	}
 	
 	@Override
 	public void onPause(){
 		super.onPause();
 		// Override transition for exiting the activity
-		this.overridePendingTransition(0, 0);
+		overridePendingTransition(0, 0);
 	}
 }

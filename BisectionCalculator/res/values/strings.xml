@@ -12,6 +12,7 @@
     <string name="calc">Calculate</string>
     <string name="uMess">For information on usage, please see the Usage menu.</string>
     <string name="basicUsage">Basic Usage:</string>
+    <string name="bisectButton">Bisection Method</string>
     <string name="usageInfo">- Ensure to specify multiplication, for example (7*x) in place of 7x.\n\n- To calculate the root after a given number of iterations, set the tolerance to 0.\n\n- If you wish to calculate an exact root, set the iterations to 0.\n\n- These can be used together, for example calculate the root after X iterations or to within a tolerance of X.\n\n- If using both, try to ensure your function has a root at 0. There is a check, but it\'s not infallible.</string>
     <string name="title_activity_about">About</string>
     <string name="title_activity_usage">Usage</string>

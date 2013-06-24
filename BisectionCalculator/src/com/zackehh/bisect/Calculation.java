@@ -2,11 +2,9 @@ package com.zackehh.bisect;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Point;
 import android.support.v4.app.Fragment;
-import android.view.Display;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -43,19 +41,14 @@ public class Calculation extends Fragment {
 	
 	// Create a new instance of the fragment
 	public static Fragment newInstance() {
-		// Create a new calculator
-		Calculation calc = new Calculation();
 		// Return the calculator
-		return calc;
+		return new Calculation();
 	}
 	
-	// Suppressions due to old/new API support
-	@SuppressLint("NewApi")
-	@SuppressWarnings("deprecation")
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		// Initialize the ViewGroup for the fragment
-		vCalc = (ViewGroup)inflater.inflate(R.layout.activity_bisection, null);
+		vCalc = (ViewGroup)inflater.inflate(R.layout.bisection, null);
 		
 		// Tell the calculate button what to calculate
 		Button calculate = (Button)vCalc.findViewById(R.id.calculate);
@@ -107,17 +100,10 @@ public class Calculation extends Fragment {
 		});
 
 		// Get the display width
-		Display display = getActivity().getWindowManager().getDefaultDisplay();
-		// For new API
-		if (android.os.Build.VERSION.SDK_INT >= 13){
-			Point size = new Point();
-			display.getSize(size);
-			width = (size.x) / 4;
-		} else {
-			// For old API
-			width = (display.getWidth()) / 4;
-		}
-
+		DisplayMetrics screen = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(screen);
+		width = screen.widthPixels / 4;
+		
 		// Set listeners for the two buttons
 		final Button calcButtonRoot = (Button)vCalc.findViewById(R.id.calcButtonRoot);
 		final Button calcButtonMax = (Button)vCalc.findViewById(R.id.calcButtonMax);
@@ -198,37 +184,14 @@ public class Calculation extends Fragment {
 	}
 
 	/**
-	 * Shows a toast message when the user changes what will be
-	 * calculated. Not sure if it's needed so not included currently.
-	 */
-	/*public void showToast(){
-		int duration; CharSequence text;
-		if(rootToCalc){
-			text = "We will now calculate the root.";
-		} else {
-			text = "We will now calculate iterations.";
-		}
-		duration = Toast.LENGTH_SHORT;
-		Toast.makeText(getApplicationContext(), text, duration).show();
-	}*/
-
-	/**
-	 * Calls updateUI method to update the result from the thread.
-	 */
-	final Runnable updateRunnable = new Runnable() {
-		public void run() {
-			updateUI();
-		}
-	};
-
-	/**
 	 * Allows the updating of the result from the thread. Bit of a hacky
 	 * method called from updateRunnable.
 	 */
-	private void updateUI(){
-		TextView result = (TextView)vCalc.findViewById(R.id.Root);
-		result.setText(setResult);
-	}
+	final Runnable updateRunnable = new Runnable() {
+		public void run() {
+			((TextView)vCalc.findViewById(R.id.Root)).setText(setResult);
+		}
+	};
 
 	/**
 	 * Class to calculate the bisection of an interval between a and b to the tolerance TOL, 
@@ -289,9 +252,7 @@ public class Calculation extends Fragment {
 	 * @return 
 	 */
 	public Boolean testEquation(){
-		if(fOfX(a) < 0 && fOfX(b) > 0){
-			return true;
-		} else if (fOfX(a) > 0 && fOfX(b) < 0){
+		if((fOfX(a) < 0 && fOfX(b) > 0) || (fOfX(a) > 0 && fOfX(b) < 0)){
 			return true;
 		} else {
 			return false;
@@ -309,8 +270,7 @@ public class Calculation extends Fragment {
 		Calculable function;
 		try {
 			// Find the function from user input
-			EditText myFunction = (EditText)vCalc.findViewById(R.id.function);
-			function = new ExpressionBuilder(myFunction.getText().toString()).withVariableNames("x").build();
+			function = new ExpressionBuilder(((EditText)vCalc.findViewById(R.id.function)).getText().toString()).withVariableNames("x").build();
 			function.setVariable("x",x);
 			x = function.calculate();
 		} catch (UnknownFunctionException e) {
@@ -327,8 +287,6 @@ public class Calculation extends Fragment {
 	 * @return t the maximum number of iterations
 	 */
 	public double maxIterations(){
-		double t;
-		t = ceil(((log((b-a)/TOL))/log(2)));
-		return t;
+		return ceil(((log((b-a)/TOL))/log(2)));
 	}
 }
