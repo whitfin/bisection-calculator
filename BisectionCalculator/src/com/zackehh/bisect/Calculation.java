@@ -252,7 +252,7 @@ public class Calculation extends Fragment {
 	 * @return 
 	 */
 	public Boolean testEquation(){
-		if((fOfX(a) < 0 && fOfX(b) > 0) || (fOfX(a) > 0 && fOfX(b) < 0)){
+		if(a < b && (fOfX(a) < 0 && fOfX(b) > 0 || fOfX(a) > 0 && fOfX(b) < 0)){
 			return true;
 		} else {
 			return false;
