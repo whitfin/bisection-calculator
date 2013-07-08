@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-//import android.widget.Toast;
 import static java.lang.Math.*;
 
 import com.zackehh.parse.*;
@@ -38,18 +37,18 @@ public class Calculation extends Fragment {
 	int width;
 	// Set the ViewGroup for the fragment
 	private ViewGroup vCalc;
-	
+
 	// Create a new instance of the fragment
 	public static Fragment newInstance() {
 		// Return the calculator
 		return new Calculation();
 	}
-	
+
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		// Initialize the ViewGroup for the fragment
 		vCalc = (ViewGroup)inflater.inflate(R.layout.bisection, null);
-		
+
 		// Tell the calculate button what to calculate
 		Button calculate = (Button)vCalc.findViewById(R.id.calculate);
 		calculate.setOnClickListener(new View.OnClickListener(){
@@ -103,7 +102,7 @@ public class Calculation extends Fragment {
 		DisplayMetrics screen = new DisplayMetrics();
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(screen);
 		width = screen.widthPixels / 4;
-		
+
 		// Set listeners for the two buttons
 		final Button calcButtonRoot = (Button)vCalc.findViewById(R.id.calcButtonRoot);
 		final Button calcButtonMax = (Button)vCalc.findViewById(R.id.calcButtonMax);
@@ -207,7 +206,7 @@ public class Calculation extends Fragment {
 
 		// Initialize counter for loop counts
 		int i = 1;
-	
+
 		// If the user hasn't selected a maximum, go as needed
 		if (M == 0){
 			M = (int) maxIterations();
