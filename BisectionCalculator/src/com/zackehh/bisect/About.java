@@ -1,16 +1,19 @@
 package com.zackehh.bisect;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import static android.text.Html.*;
+import static android.util.Base64.*;
 
 /**
  * About page for the calculator just detailing information
@@ -20,6 +23,9 @@ import static android.text.Html.*;
  * @version 25/05/2013
  */
 public class About extends Fragment {
+	
+	// Contact 
+	private String address = "WkVkb2JHTXlPVEZpUnpsdFpXMUdhbUV5Vm05UlIyUjBXVmRzYzB4dFRuWmlVVDA5";
 	
 	// Create a new instance of the fragment
 	public static Fragment newInstance() {
@@ -43,8 +49,9 @@ public class About extends Fragment {
 		// Set all the links to direct to their URL
 		for(int i = 0; i < 3; i++){
 			TextView view = (TextView)vAbout.findViewById(views[i]);
-			view.setMovementMethod(LinkMovementMethod.getInstance());
+			if(i != 1) view.setMovementMethod(LinkMovementMethod.getInstance());
 			view.setText(fromHtml(getResources().getString(views[i + 3])));
+			address = new String(decode(address, 0));
 		}
 		// Put the version number beside the author string
 		try {
@@ -53,11 +60,21 @@ public class About extends Fragment {
 							+ " " +
 							fromHtml(getResources().getString(R.string.author)));
 		} catch (NameNotFoundException e) { } 
+		((TextView)vAbout.findViewById(R.id.report)).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View viewIn) {
+            	Intent email = new Intent(Intent.ACTION_SEND);
+			    email.putExtra(Intent.EXTRA_EMAIL, new String[]{ address });        
+			    email.putExtra(Intent.EXTRA_SUBJECT, "Bisection Calculator Bug Report");
+			    email.setType("message/rfc822");
+			    startActivity(Intent.createChooser(email, "Select an email client:"));
+            }
+        });
 		// Return the fragment
 		return vAbout;
 	}
-
-	@Override
+	
+	@Override 
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
 		if(isVisibleToUser){ 

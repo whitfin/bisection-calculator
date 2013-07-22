@@ -1,5 +1,8 @@
 Changelog
 ----------
+v1.1.6
+- Improved handling of bug reports
+
 v1.1.5
 - Fixed a keyboard issue when scrolling
 
