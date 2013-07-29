@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import static android.text.Html.*;
-import static android.util.Base64.*;
+import static com.zackehh.util.Base64.*;
 
 /**
  * About page for the calculator just detailing information

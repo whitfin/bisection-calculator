@@ -1,5 +1,8 @@
 Changelog
 ----------
+v1.1.7
+- Added support for API 7 devices
+
 v1.1.6
 - Improved handling of bug reports
 
