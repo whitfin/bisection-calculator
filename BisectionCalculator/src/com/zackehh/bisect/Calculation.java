@@ -2,7 +2,7 @@ package com.zackehh.bisect;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -30,6 +30,7 @@ public class Calculation extends Fragment {
 	int M;
 	// Control for the thread and result
 	private Handler threadHandler = new Handler();
+	// The string result
 	private String setResult;
 	// Set boolean for calculation choice
 	private boolean rootToCalc = true;
@@ -45,10 +46,13 @@ public class Calculation extends Fragment {
 	}
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
 		// Initialize the ViewGroup for the fragment
 		vCalc = (ViewGroup)inflater.inflate(R.layout.bisection, null);
-
+		// Detect if it's being run on a tablet
+		if(isTablet()){
+			// Force landscape orientation
+			getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		}
 		// Tell the calculate button what to calculate
 		Button calculate = (Button)vCalc.findViewById(R.id.calculate);
 		calculate.setOnClickListener(new View.OnClickListener(){
@@ -107,6 +111,9 @@ public class Calculation extends Fragment {
 		final Button calcButtonRoot = (Button)vCalc.findViewById(R.id.calcButtonRoot);
 		final Button calcButtonMax = (Button)vCalc.findViewById(R.id.calcButtonMax);
 
+		// Set the width of the calculate button
+		calculate.setWidth(width);
+		
 		// Set the button width and the onClick()
 		calcButtonRoot.setWidth(width);
 		calcButtonRoot.setOnClickListener(new View.OnClickListener(){
@@ -115,7 +122,6 @@ public class Calculation extends Fragment {
 				if(!rootToCalc){
 					rootToCalc = true;
 					flipButton(calcButtonRoot, calcButtonMax);
-					//showToast();
 				}
 			}
 		});
@@ -126,7 +132,6 @@ public class Calculation extends Fragment {
 				if(rootToCalc){
 					rootToCalc = false;
 					flipButton(calcButtonMax, calcButtonRoot);
-					//showToast();
 				}
 			}
 		});
@@ -136,7 +141,6 @@ public class Calculation extends Fragment {
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)calculate.getLayoutParams();
 			params.setMargins(width, 0, width, 0); 
 			calculate.setLayoutParams(params);
-			calculate.setWidth(width);
 
 			int views[] = {
 					R.id.pointA, 
@@ -151,8 +155,7 @@ public class Calculation extends Fragment {
 
 			// Set the width of all the views
 			for(int i = 0; i < views.length; i++){
-				TextView view = (TextView)vCalc.findViewById(views[i]);
-				view.setWidth(width);
+				((TextView)vCalc.findViewById(views[i])).setWidth(width);
 			}
 		}
 		// End of setting up landscape view
@@ -160,14 +163,25 @@ public class Calculation extends Fragment {
 	}
 
 	/**
-	 * Remaps the main vCalc back button to exit the application, instead
-	 * of going to the About/Usage vCalc. Makes it seem a bit neater.
+	 * Detects if the application is being run on a tablet, to be used
+	 * whilst the portrait tablet version is still in progress.
+	 * 
+	 * @return true if the device running the app is a tablet
 	 */
-	public void onBackPressed() {
-		Intent exit = new Intent(Intent.ACTION_MAIN);
-		exit.addCategory(Intent.CATEGORY_HOME);
-		exit.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(exit);
+	private boolean isTablet(){
+		// Get the display metrics
+		DisplayMetrics metrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		// Find the width and height in inches
+		float widthInches = metrics.widthPixels / metrics.xdpi;
+		float heightInches = metrics.heightPixels / metrics.ydpi;
+		// If it's bigger than 7 inches across, it's a tablet
+		if(sqrt(pow(widthInches, 2) + pow(heightInches, 2)) >= 7){
+			return true;
+		} else {
+			// Otherwise it isn't
+			return false;
+		}
 	}
 
 	/**
@@ -177,20 +191,10 @@ public class Calculation extends Fragment {
 	 * @param pressed the button being pressed
 	 * @param released the button being released
 	 */
-	public void flipButton(Button pressed, Button released){
+	private void flipButton(Button pressed, Button released){
 		pressed.setBackgroundResource(R.drawable.roundedhighlight);
 		released.setBackgroundResource(R.drawable.rounded);
 	}
-
-	/**
-	 * Allows the updating of the result from the thread. Bit of a hacky
-	 * method called from updateRunnable.
-	 */
-	final Runnable updateRunnable = new Runnable() {
-		public void run() {
-			((TextView)vCalc.findViewById(R.id.Root)).setText(setResult);
-		}
-	};
 
 	/**
 	 * Class to calculate the bisection of an interval between a and b to the tolerance TOL, 
@@ -198,7 +202,7 @@ public class Calculation extends Fragment {
 	 * calculating the bisection to a given number of iterations without considering a 
 	 * tolerance.
 	 */
-	public void bisection(){
+	private void bisection(){
 		// Attempt at stopping infinite loops. Bit bleh, needs reworking sometime.
 		if(TOL == 0 && M == 0){
 			TOL = 0.000000000000001;
@@ -230,10 +234,9 @@ public class Calculation extends Fragment {
 					if(i == M && (fOfX(p) != 0 || (b - a)/2 >= TOL) && TOL != 0){
 						setResult = "The bisection cannot be calcluated to this tolerance within this amount of iterations.";
 					} else if (i == M && TOL == 0){
+						setResult = "Root = " + String.valueOf(p) + " after " + i + " iterations.";
 						if(i == 1){
-							setResult = "Root = " + String.valueOf(p) + " after " + i + " iteration.";
-						} else {
-							setResult = "Root = " + String.valueOf(p) + " after " + i + " iterations.";
+							setResult = setResult.substring(0, setResult.length() - 2) + ".";
 						}
 					}
 					i++;
@@ -242,7 +245,11 @@ public class Calculation extends Fragment {
 			setResult = "Please check your function has a root at 0.";
 		}
 		// Update the UI when the bisection is complete
-		threadHandler.post(updateRunnable);
+		threadHandler.post(new Runnable(){
+			public void run(){
+				((TextView)vCalc.findViewById(R.id.Root)).setText(setResult);
+			}
+		});
 	}
 
 	/**
@@ -250,7 +257,7 @@ public class Calculation extends Fragment {
 	 * 
 	 * @return 
 	 */
-	public Boolean testEquation(){
+	private Boolean testEquation(){
 		if(a < b && (fOfX(a) < 0 && fOfX(b) > 0 || fOfX(a) > 0 && fOfX(b) < 0)){
 			return true;
 		} else {
@@ -264,7 +271,7 @@ public class Calculation extends Fragment {
 	 * @param x the value used in place of x
 	 * @return x the value of x
 	 */
-	public double fOfX(double x){
+	private double fOfX(double x){
 		// Test function
 		Calculable function;
 		try {
@@ -283,9 +290,9 @@ public class Calculation extends Fragment {
 	/**
 	 * Calculates the maximum number of iterations needed to find the bisection within the tolerance.
 	 * 
-	 * @return t the maximum number of iterations
+	 * @return the maximum number of iterations
 	 */
-	public double maxIterations(){
+	private double maxIterations(){
 		return ceil(((log((b-a)/TOL))/log(2)));
 	}
 }

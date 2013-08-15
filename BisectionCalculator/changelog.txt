@@ -1,5 +1,9 @@
 Changelog
 ----------
+v1.1.8
+- Added temporary fix for bad layout on portrait tablets
+- Small code optimization
+
 v1.1.7
 - Added support for API 7 devices
 
