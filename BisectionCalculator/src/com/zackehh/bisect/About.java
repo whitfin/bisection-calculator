@@ -1,5 +1,7 @@
 package com.zackehh.bisect;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -57,7 +59,7 @@ public class About extends Fragment {
 		try {
 			TextView vAuthor = (TextView)vAbout.findViewById(R.id.author);
 			vAuthor.setText("v" + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName
-							+ " " +
+							+ " © " + Calendar.getInstance().get(Calendar.YEAR) + " " +
 							fromHtml(getResources().getString(R.string.author)));
 		} catch (NameNotFoundException e) { } 
 		((TextView)vAbout.findViewById(R.id.report)).setOnClickListener(new OnClickListener() {
@@ -73,7 +75,7 @@ public class About extends Fragment {
 		// Return the fragment
 		return vAbout;
 	}
-	
+
 	@Override 
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);

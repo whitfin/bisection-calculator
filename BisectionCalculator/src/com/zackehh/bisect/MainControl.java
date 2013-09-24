@@ -1,5 +1,6 @@
 package com.zackehh.bisect;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Button;
  * @author Isaac Whitfield
  * @version 09/06/2013
  */
+@SuppressLint("Registered")
 public class MainControl extends Activity {
 
 	@Override
