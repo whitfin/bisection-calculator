@@ -21,3 +21,4 @@
 -libraryjars libs/android-support-v4.jar
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
+-dontwarn android.support.v4.**
